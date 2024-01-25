@@ -120,7 +120,10 @@ export const generateReport = asyncHandler(async (req, res) => {
         "Cummulative call average",
         "Cummulative focus Drs met",
       ];
-
+      worksheet.mergeCells(`A${rowOffset+6}`, `Q${rowOffset+6}`);
+      worksheet.getCell(`A${rowOffset+6}`).value = "PHARMACY COVERAGE";
+      worksheet.getCell(`A${rowOffset+6}`).font = { bold: true };
+      worksheet.getCell(`A${rowOffset+6}`).alignment = { horizontal: "center" };
       // Add feedback headers
       feedbackHeaders.forEach((header, index) => {
         worksheet.mergeCells(`D${rowOffset + index}`, `E${rowOffset + index}`);
