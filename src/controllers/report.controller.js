@@ -29,23 +29,27 @@ export const generateReport = asyncHandler(async (req, res) => {
     const products = ["ARC", "NFX", "RFX", "SNG", "EXPECT", "PECOS"];
     const data = [
       [1, 89, "Kasuka Arafat", "ENT", "Mulago", "RFX", 4, "D", "D"],
-      [2, null, "Kamukama Gp", "IMC", "NFX", "D"],
-      [3, null, "Were Ivan Gp", "Abii", "RFX", 4, "D", "D"],
+      [2, null, "Kamukama","Gp" , "IMC", "NFX", "D"],
+      [3, null, "Were Ivan", "Gp", "Abii", "RFX", 4, "D", "D"],
     ];
 
-    const worksheet = await createWorksheet(
+    for (let index = 0; index <= 28; index++) {
+      
+      const worksheet = await createWorksheet(
       workbook,
-      "Daily Report",
+      `February ${index+1} 2024`,
     {
     name:"Masaba Musa",
-    date:"16/10/2023",
-    place:"Mulago/Wandegeya"},
+    date:"",
+    place:""},
       mainHeaders,
       products,
       data
     );
     generateFeedbackSection(worksheet, 23);
     generatePharmacyCoverageSection(worksheet, 30);
+    }
+    
     workbook.xlsx.writeFile("daily_report.xlsx").then(() => {
       res.send("Excel file created successfully.");
     });

@@ -81,6 +81,7 @@ import {
         `E${rowOffset + index}`,
         header
       );
+      worksheet.getCell(`D${rowOffset + index}`).alignment=""
     });
 };
 
