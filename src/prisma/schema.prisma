@@ -9,3 +9,133 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model User {
+  user_id            String                  @id @default(uuid())
+  username           String
+  password           String
+  role               String
+  company            Company?             @relation(fields: [company_id], references: [company_id])
+  company_id          String?
+  team               Team?                @relation(fields: [team_id], references: [team_id])
+  team_id             String?
+  sample_distributions SampleDistribution[]
+  daily_activities   DailyActivity[]
+  daily_plans        DailyPlan[]
+  monthly_plans      MonthlyPlan[]
+}
+
+model Company {
+  company_id         String                 @id @default(uuid())
+  company_name       String
+  products           Product[]
+  users              User[]
+}
+
+model Product {
+  product_id         String                 @id @default(uuid())
+  product_name       String
+  company_id         String
+  company            Company              @relation(fields: [company_id], references: [company_id])
+  stock_trackings    StockTracking[]
+  team_products      TeamProduct[]
+  sample_distributions SampleDistribution[]
+  daily_activities   DailyActivity[]       @relation("generalProducts") 
+  focused_activities DailyActivity[]       @relation("focussedProduct")
+}
+
+model Doctor {
+  doctor_id          String                  @id @default(uuid())
+  doctor_name        String
+  sample_distributions SampleDistribution[]
+  dailyActiviy        DailyActivity[]
+}
+
+model Pharmacy {
+  pharmacy_id        String                  @id @default(uuid())
+  pharmacy_name      String
+  stock_trackings    StockTracking[]
+  daily_activities   DailyActivity[]
+}
+
+model Team {
+  team_id            String                  @id @default(uuid())
+  team_name          String
+  users              User[]
+  team_products      TeamProduct[]
+  daily_activities   DailyActivity[]
+  monthly_plans      MonthlyPlan[]
+}
+
+model TeamProduct {
+  team_id            String
+  product_id         String
+  team               Team                 @relation(fields: [team_id], references: [team_id])
+  product            Product              @relation(fields: [product_id], references: [product_id])
+
+  @@id([team_id, product_id])
+}
+
+model StockTracking {
+  pharmacy_id        String
+  product_id         String
+  month              Int
+  year               Int
+  quantity           Int
+
+  pharmacy           Pharmacy             @relation(fields: [pharmacy_id], references: [pharmacy_id])
+  product            Product              @relation(fields: [product_id], references: [product_id])
+
+  @@id([pharmacy_id, product_id, month, year])
+}
+
+model SampleDistribution {
+  user               User                 @relation(fields: [user_id], references: [user_id])
+  user_id             String
+  doctor             Doctor               @relation(fields: [doctor_id], references: [doctor_id])
+  doctor_id           String
+  product            Product              @relation(fields: [product_id], references: [product_id])
+  product_id          String
+  samples_given      Int
+  date               DateTime
+
+  @@id([user_id, doctor_id, product_id, date])
+}
+
+model DailyActivity {
+  id                  String          @id @default(uuid())
+  user               User                 @relation(fields: [user_id], references: [user_id])
+  user_id             String
+  product            Product              @relation("generalProducts",fields: [product_id], references: [product_id])
+  product_id          String
+  doctor             Doctor               @relation(fields: [doctor_id], references: [doctor_id])
+  doctor_id           String
+  pharmacy           Pharmacy             @relation(fields: [pharmacy_id], references: [pharmacy_id])
+  pharmacy_id         String
+  date               DateTime
+  doctors_met        Int
+  products_detailed  Int
+  samples_given      Int
+  focused_product    Product              @relation("focussedProduct",fields: [focused_product_id], references: [product_id])                       
+  focused_product_id  String
+  pharmacies_visited Int
+  team                Team[]
+}
+
+model DailyPlan {
+  user               User                 @relation(fields: [user_id], references: [user_id])
+  user_id             String
+  date               DateTime
+  activities         String
+
+  @@id([user_id, date])
+}
+
+model MonthlyPlan {
+  id                  String              @id @default(uuid())
+  user               User                 @relation(fields: [user_id], references: [user_id])
+  user_id             String
+  month              Int
+  year               Int
+  activities         String
+  team                Team[]
+}
