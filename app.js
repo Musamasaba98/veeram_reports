@@ -1,13 +1,13 @@
-import express from 'express'
-import reportRouter from './routes/report.route.js'
-import morgan from 'morgan'
+import express from "express";
+import reportRouter from "./src/routes/report.route.js";
+import morgan from "morgan";
 
-const app=express()
+const app = express();
 
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/report',reportRouter)
+app.use("/api/report", reportRouter);
 
-export default app
+export default app;
