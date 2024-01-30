@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  user_id              String               @id @default(uuid())
+  id                   String               @id @default(uuid())
   username             String
   firstname            String
   lastname             String
@@ -22,9 +22,9 @@ model User {
   gender               Gender
   latitude             Float?
   longitude            Float?
-  company              Company?             @relation(fields: [company_id], references: [company_id])
+  company              Company?             @relation(fields: [company_id], references: [id])
   company_id           String?
-  team                 Team?                @relation(fields: [team_id], references: [team_id])
+  team                 Team?                @relation(fields: [team_id], references: [id])
   team_id              String?
   sample_distributions SampleDistribution[]
   daily_activities     DailyActivity[]
@@ -40,61 +40,61 @@ model User {
 }
 
 model SupervisorProfile {
-  profile_id    String     @id @default(uuid())
+  id            String     @id @default(uuid())
   bio           String?
-  user          User       @relation(fields: [userUser_id], references: [user_id])
+  user          User       @relation(fields: [userUser_id], references: [id])
   userUser_id   String     @unique
-  supervisor    Supervisor @relation(fields: [supervisor_id], references: [supervisor_id])
+  supervisor    Supervisor @relation(fields: [supervisor_id], references: [id])
   supervisor_id String
 }
 
 model ManagerProfile {
-  profile_id        String  @id @default(uuid())
+  id                String  @id @default(uuid())
   bio               String?
-  user              User    @relation(fields: [userUser_id], references: [user_id])
-  manager           Manager @relation(fields: [managerManager_id], references: [manager_id])
+  user              User    @relation(fields: [userUser_id], references: [id])
+  manager           Manager @relation(fields: [managerManager_id], references: [id])
   userUser_id       String  @unique
   managerManager_id String
 }
 
 model MedicalRepProfile {
-  profile_id               String     @id @default(uuid())
+  id                       String     @id @default(uuid())
   bio                      String?
-  user                     User       @relation(fields: [userUser_id], references: [user_id])
-  medRep                   MedicalRep @relation(fields: [medicalRepMedical_rep_id], references: [medical_rep_id])
+  user                     User       @relation(fields: [userUser_id], references: [id])
+  medRep                   MedicalRep @relation(fields: [medicalRepMedical_rep_id], references: [id])
   userUser_id              String     @unique
   medicalRepMedical_rep_id String
 }
 
 model Profile {
-  profile_id String  @id @default(uuid())
-  bio        String?
-  doctor     Doctor? @relation(fields: [doctor_id], references: [doctor_id])
-  doctor_id  String? @unique
-  gender     Gender
+  id        String  @id @default(uuid())
+  bio       String?
+  doctor    Doctor? @relation(fields: [doctor_id], references: [id])
+  doctor_id String? @unique
+  gender    Gender
 }
 
 model Supervisor {
-  supervisor_id      String              @id @default(uuid())
+  id                 String              @id @default(uuid())
   supervisor_name    String
   supervisor_profile SupervisorProfile[]
 }
 
 model Manager {
-  manager_id   String @id @default(uuid())
+  id           String @id @default(uuid())
   manager_name String
 
   ManagerProfile ManagerProfile[]
 }
 
 model MedicalRep {
-  medical_rep_id    String              @id @default(uuid())
+  id                String              @id @default(uuid())
   medical_rep_name  String
   MedicalRepProfile MedicalRepProfile[]
 }
 
 model Company {
-  company_id   String    @id @default(uuid())
+  id           String    @id @default(uuid())
   company_name String
   location     String
   latitude     Float?
@@ -104,10 +104,10 @@ model Company {
 }
 
 model Product {
-  product_id           String               @id @default(uuid())
+  id                   String               @id @default(uuid())
   product_name         String
   company_id           String
-  company              Company              @relation(fields: [company_id], references: [company_id])
+  company              Company              @relation(fields: [company_id], references: [id])
   stock_trackings      StockTracking[]
   team_products        TeamProduct[]
   sample_distributions SampleDistribution[]
@@ -116,7 +116,7 @@ model Product {
 }
 
 model Doctor {
-  doctor_id            String               @id @default(uuid())
+  id                   String               @id @default(uuid())
   doctor_name          String
   speciality           String[]
   facility             Facility[]
@@ -129,7 +129,7 @@ model Doctor {
 }
 
 model Pharmacy {
-  pharmacy_id      String          @id @default(uuid())
+  id               String          @id @default(uuid())
   pharmacy_name    String
   location         String
   description      String?
@@ -138,7 +138,7 @@ model Pharmacy {
 }
 
 model Team {
-  team_id          String          @id @default(uuid())
+  id               String          @id @default(uuid())
   team_name        String
   users            User[]
   team_products    TeamProduct[]
@@ -149,8 +149,8 @@ model Team {
 model TeamProduct {
   team_id    String
   product_id String
-  team       Team    @relation(fields: [team_id], references: [team_id])
-  product    Product @relation(fields: [product_id], references: [product_id])
+  team       Team    @relation(fields: [team_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 
   @@id([team_id, product_id])
 }
@@ -162,18 +162,18 @@ model StockTracking {
   year        Int
   quantity    Int
 
-  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [pharmacy_id])
-  product  Product  @relation(fields: [product_id], references: [product_id])
+  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [id])
+  product  Product  @relation(fields: [product_id], references: [id])
 
   @@id([pharmacy_id, product_id, month, year])
 }
 
 model SampleDistribution {
-  user          User     @relation(fields: [user_id], references: [user_id])
+  user          User     @relation(fields: [user_id], references: [id])
   user_id       String
-  doctor        Doctor   @relation(fields: [doctor_id], references: [doctor_id])
+  doctor        Doctor   @relation(fields: [doctor_id], references: [id])
   doctor_id     String
-  product       Product  @relation(fields: [product_id], references: [product_id])
+  product       Product  @relation(fields: [product_id], references: [id])
   product_id    String
   samples_given Int
   date          DateTime
@@ -183,26 +183,26 @@ model SampleDistribution {
 
 model DailyActivity {
   id                 String   @id @default(uuid())
-  user               User     @relation(fields: [user_id], references: [user_id])
+  user               User     @relation(fields: [user_id], references: [id])
   user_id            String
-  product            Product  @relation("generalProducts", fields: [product_id], references: [product_id])
+  product            Product  @relation("generalProducts", fields: [product_id], references: [id])
   product_id         String
-  doctor             Doctor   @relation(fields: [doctor_id], references: [doctor_id])
+  doctor             Doctor   @relation(fields: [doctor_id], references: [id])
   doctor_id          String
-  pharmacy           Pharmacy @relation(fields: [pharmacy_id], references: [pharmacy_id])
+  pharmacy           Pharmacy @relation(fields: [pharmacy_id], references: [id])
   pharmacy_id        String
   date               DateTime
   doctors_met        Int
   products_detailed  Int
   samples_given      Int
-  focused_product    Product  @relation("focussedProduct", fields: [focused_product_id], references: [product_id])
+  focused_product    Product  @relation("focussedProduct", fields: [focused_product_id], references: [id])
   focused_product_id String
   pharmacies_visited Int
   team               Team[]
 }
 
 model DailyPlan {
-  user       User     @relation(fields: [user_id], references: [user_id])
+  user       User     @relation(fields: [user_id], references: [id])
   user_id    String
   date       DateTime
   activities String
@@ -212,7 +212,7 @@ model DailyPlan {
 
 model MonthlyPlan {
   id         String @id @default(uuid())
-  user       User   @relation(fields: [user_id], references: [user_id])
+  user       User   @relation(fields: [user_id], references: [id])
   user_id    String
   month      Int
   year       Int
@@ -221,7 +221,7 @@ model MonthlyPlan {
 }
 
 model Facility {
-  facility_id String   @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   location    String
   description String?
