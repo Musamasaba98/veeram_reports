@@ -4,7 +4,7 @@ import {
   getAll,
   getOne,
   updateOne,
-} from "./factory.controller";
+} from "./factory.controller.js";
 
 export const createCompany = createOne("company");
 export const getCompany = getOne("company");

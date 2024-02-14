@@ -5,7 +5,7 @@ import {
   getAllCompany,
   getCompany,
   updateCompany,
-} from "../controllers/company.controller";
+} from "../controllers/company.controller.js";
 
 const router = express.Router();
 
