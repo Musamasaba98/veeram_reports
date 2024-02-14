@@ -221,13 +221,14 @@ model MonthlyPlan {
 }
 
 model Facility {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   location    String
   description String?
   latitude    Float?
   longitude   Float?
-  doctors     Doctor[]
+  doctor_id   String?
+  doctor      Doctor? @relation(fields: [doctor_id], references: [id])
   users       User[]
 }
 
