@@ -6,6 +6,8 @@ import facilityRouter from "./src/routes/facility.route.js";
 import pharmacyRouter from "./src/routes/pharmacy.route.js";
 import productRouter from "./src/routes/product.route.js";
 import teamRouter from "./src/routes/team.route.js";
+import sampleDistributionRouter from "./src/routes/sampledistribution.route.js";
+import stockTrackingRouter from "./src/routes/stocktracking.route.js";
 import morgan from "morgan";
 
 const app = express();
@@ -21,5 +23,7 @@ app.use("/api/facility", facilityRouter);
 app.use("/api/pharmacy", pharmacyRouter);
 app.use("/api/product", productRouter);
 app.use("/api/team", teamRouter);
+app.use("/api/sample", sampleDistributionRouter);
+app.use("/api/stock", stockTrackingRouter);
 
 export default app;

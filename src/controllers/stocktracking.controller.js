@@ -4,7 +4,7 @@ import {
   getAll,
   getOne,
   updateOne,
-} from "./factory.controller";
+} from "./factory.controller.js";
 
 export const createStockTracking = createOne("stocktracking");
 export const getStockTracking = getOne("stocktracking");
