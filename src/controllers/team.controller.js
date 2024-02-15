@@ -4,7 +4,7 @@ import {
   getAll,
   getOne,
   updateOne,
-} from "./factory.controller";
+} from "./factory.controller.js";
 
 export const createTeam = createOne("team");
 export const getTeam = getOne("team");
