@@ -1,16 +1,17 @@
 import { deleteOne, getAll, getOne, updateOne } from "./factory.controller.js";
 import asyncHandler from "express-async-handler";
 import prisma from "../config/prisma.config.js";
+
 export const createSampleDistribution = asyncHandler(async (req, res) => {
   try {
-    const { userId, doctorId, productId, samplesGiven, date } = req.body;
+    const { user_id, doctor_id, product_id, samples_given, date } = req.body;
 
     const sample = await prisma.sampleDistribution.create({
       data: {
-        user: { connect: { user_id: userId } },
-        doctor: { connect: { doctor_id: doctorId } },
-        product: { connect: { product_id: productId } },
-        samples_given: samplesGiven,
+        user: { connect: { id: user_id } },
+        doctor: { connect: { id: doctor_id } },
+        product: { connect: { id: product_id } },
+        samples_given,
         date: new Date(date),
       },
     });

@@ -13,8 +13,8 @@ export const signup = asyncHandler(async (req, res, next) => {
     role,
     contact,
     gender,
-    companyId,
-    teamId,
+    // companyId,
+    // teamId,
   } = req.body;
   try {
     const existingUser = await prisma.user.findFirst({
