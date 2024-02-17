@@ -40,6 +40,7 @@ model User {
   medical_rep_id       String?              @unique
   date_of_joining      DateTime             @default(now())
   last_edit_date       DateTime             @updatedAt
+  Procurement          Procurement[]
 }
 
 model SupervisorProfile {
@@ -70,13 +71,14 @@ model MedicalRepProfile {
 }
 
 model Profile {
-  id              String   @id @default(uuid())
+  id              String        @id @default(uuid())
   bio             String?
-  doctor          Doctor?  @relation(fields: [doctor_id], references: [id])
-  doctor_id       String?  @unique
+  doctor          Doctor?       @relation(fields: [doctor_id], references: [id])
+  doctor_id       String?       @unique
   gender          Gender
-  date_of_joining DateTime @default(now())
-  last_edit_date  DateTime @updatedAt
+  date_of_joining DateTime      @default(now())
+  last_edit_date  DateTime      @updatedAt
+  Procurement     Procurement[]
 }
 
 model Supervisor {
@@ -129,6 +131,8 @@ model Product {
   general_product_activity DoctorActivity[]     @relation("productsDetailed")
   PharmacyActivity         PharmacyActivity?    @relation(fields: [pharmacyActivityId], references: [id])
   pharmacyActivityId       String?
+  Procurement              Procurement?         @relation(fields: [procurementId], references: [id])
+  procurementId            String?
 }
 
 model Doctor {
@@ -154,6 +158,7 @@ model Pharmacy {
   stock_trackings  StockTracking[]
   last_edit_date   DateTime           @updatedAt
   PharmacyActivity PharmacyActivity[]
+  Procurement      Procurement[]
 }
 
 model Team {
@@ -227,6 +232,20 @@ model PharmacyActivity {
   stockTrackingDate        DateTime
 }
 
+model Procurement {
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [user_id], references: [id])
+  user_id     String
+  pharmacy    Pharmacy? @relation(fields: [pharmacy_id], references: [id])
+  pharmacy_id String?
+  facility    Facility? @relation(fields: [facility_id], references: [id])
+  facility_id String?
+  date        DateTime
+  products    Product[]
+  profile     Profile   @relation(fields: [profileId], references: [id])
+  profileId   String
+}
+
 model DailyPlan {
   user           User     @relation(fields: [user_id], references: [id])
   user_id        String
@@ -248,16 +267,17 @@ model MonthlyPlan {
 }
 
 model Facility {
-  id             String   @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   location       String
   description    String?
   latitude       Float?
   longitude      Float?
   doctor_id      String?
-  doctor         Doctor?  @relation(fields: [doctor_id], references: [id])
+  doctor         Doctor?       @relation(fields: [doctor_id], references: [id])
   users          User[]
-  last_edit_date DateTime @updatedAt
+  last_edit_date DateTime      @updatedAt
+  Procurement    Procurement[]
 }
 
 enum UserRole {
