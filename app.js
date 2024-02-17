@@ -9,6 +9,8 @@ import teamRouter from "./src/routes/team.route.js";
 import sampleDistributionRouter from "./src/routes/sampledistribution.route.js";
 import stockTrackingRouter from "./src/routes/stocktracking.route.js";
 import userRouter from "./src/routes/user.route.js";
+import pharmacyActivityRouter from "./src/routes/pharmacyactivity.route.js";
+import doctorActivityRouter from "./src/routes/doctoractivity.route.js";
 import morgan from "morgan";
 
 const app = express();
@@ -27,5 +29,7 @@ app.use("/api/team", teamRouter);
 app.use("/api/sample", sampleDistributionRouter);
 app.use("/api/stock", stockTrackingRouter);
 app.use("/api/user", userRouter);
+app.use("/api/field-pharmacy", pharmacyActivityRouter);
+app.use("/api/field-doctor", doctorActivityRouter);
 
 export default app;

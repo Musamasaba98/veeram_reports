@@ -10,8 +10,20 @@ export const createPharmacyActivity = asyncHandler(async (req, res) => {
       data: {
         user: { connect: { id: user_id } },
         pharmacy: { connect: { id: pharmacy_id } },
-        products_in_stock: { connect: products_in_stock },
-        stock_tracking: { create: stock_tracking },
+        products_in_stock: { connect: { id: products_in_stock[0] } },
+        stock_tracking: {
+          create: {
+            pharmacy: pharmacy_id,
+            product: products_in_stock[0],
+            quantity: 50,
+            pharmacy: {
+              connect: { id: pharmacy_id },
+            },
+            product: {
+              connect: { id: products_in_stock[0] },
+            },
+          },
+        },
       },
     });
 
