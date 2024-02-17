@@ -27,7 +27,8 @@ model User {
   team                 Team?                @relation(fields: [team_id], references: [id])
   team_id              String?
   sample_distributions SampleDistribution[]
-  daily_activities     DailyActivity[]
+  pharmacy_activity    PharmacyActivity[]
+  doctor_activity      DoctorActivity[]
   daily_plans          DailyPlan[]
   monthly_plans        MonthlyPlan[]
   facility             Facility[]
@@ -37,6 +38,8 @@ model User {
   manager_id           String?              @unique
   medical_rep_profile  MedicalRepProfile?
   medical_rep_id       String?              @unique
+  date_of_joining      DateTime             @default(now())
+  last_edit_date       DateTime             @updatedAt
 }
 
 model SupervisorProfile {
@@ -67,52 +70,65 @@ model MedicalRepProfile {
 }
 
 model Profile {
-  id        String  @id @default(uuid())
-  bio       String?
-  doctor    Doctor? @relation(fields: [doctor_id], references: [id])
-  doctor_id String? @unique
-  gender    Gender
+  id              String   @id @default(uuid())
+  bio             String?
+  doctor          Doctor?  @relation(fields: [doctor_id], references: [id])
+  doctor_id       String?  @unique
+  gender          Gender
+  date_of_joining DateTime @default(now())
+  last_edit_date  DateTime @updatedAt
 }
 
 model Supervisor {
   id                 String              @id @default(uuid())
   supervisor_name    String
   supervisor_profile SupervisorProfile[]
+  date_of_joining    DateTime            @default(now())
+  last_edit_date     DateTime            @updatedAt
 }
 
 model Manager {
-  id           String @id @default(uuid())
-  manager_name String
-
-  ManagerProfile ManagerProfile[]
+  id              String           @id @default(uuid())
+  manager_name    String
+  ManagerProfile  ManagerProfile[]
+  date_of_joining DateTime         @default(now())
+  last_edit_date  DateTime         @updatedAt
 }
 
 model MedicalRep {
   id                String              @id @default(uuid())
   medical_rep_name  String
   MedicalRepProfile MedicalRepProfile[]
+  date_of_joining   DateTime            @default(now())
+  last_edit_date    DateTime            @updatedAt
 }
 
 model Company {
-  id           String    @id @default(uuid())
-  company_name String
-  location     String
-  latitude     Float?
-  longitude    Float?
-  products     Product[]
-  users        User[]
+  id              String    @id @default(uuid())
+  company_name    String
+  location        String
+  latitude        Float?
+  longitude       Float?
+  products        Product[]
+  users           User[]
+  date_of_joining DateTime  @default(now())
+  last_edit_date  DateTime  @updatedAt
 }
 
 model Product {
-  id                   String               @id @default(uuid())
-  product_name         String
-  company_id           String
-  company              Company              @relation(fields: [company_id], references: [id])
-  stock_trackings      StockTracking[]
-  team_products        TeamProduct[]
-  sample_distributions SampleDistribution[]
-  daily_activities     DailyActivity[]      @relation("generalProducts")
-  focused_activities   DailyActivity[]      @relation("focussedProduct")
+  id                       String               @id @default(uuid())
+  product_name             String
+  company_id               String
+  company                  Company              @relation(fields: [company_id], references: [id])
+  stock_trackings          StockTracking[]
+  team_products            TeamProduct[]
+  sample_distributions     SampleDistribution[]
+  last_edit_date           DateTime             @updatedAt
+  doctor_activity          DoctorActivity?      @relation("focussedProduct")
+  doctor_activity_id       String?
+  general_product_activity DoctorActivity[]     @relation("productsDetailed")
+  PharmacyActivity         PharmacyActivity?    @relation(fields: [pharmacyActivityId], references: [id])
+  pharmacyActivityId       String?
 }
 
 model Doctor {
@@ -124,26 +140,30 @@ model Doctor {
   town                 String
   contact              String?
   sample_distributions SampleDistribution[]
-  dailyActiviy         DailyActivity[]
   profile              Profile?
+  date_of_joining      DateTime             @default(now())
+  last_edit_date       DateTime             @updatedAt
+  DoctorActivity       DoctorActivity[]
 }
 
 model Pharmacy {
-  id               String          @id @default(uuid())
+  id               String             @id @default(uuid())
   pharmacy_name    String
   location         String
   description      String?
   stock_trackings  StockTracking[]
-  daily_activities DailyActivity[]
+  last_edit_date   DateTime           @updatedAt
+  PharmacyActivity PharmacyActivity[]
 }
 
 model Team {
-  id               String          @id @default(uuid())
+  id               String        @id @default(uuid())
   team_name        String
   users            User[]
   team_products    TeamProduct[]
-  daily_activities DailyActivity[]
   monthly_plans    MonthlyPlan[]
+  date_of_creation DateTime      @default(now())
+  last_edit_date   DateTime      @updatedAt
 }
 
 model TeamProduct {
@@ -156,16 +176,15 @@ model TeamProduct {
 }
 
 model StockTracking {
-  pharmacy_id String
-  product_id  String
-  month       Int
-  year        Int
-  quantity    Int
+  pharmacy_id      String
+  product_id       String
+  date             DateTime           @default(now())
+  pharmacy         Pharmacy           @relation(fields: [pharmacy_id], references: [id])
+  product          Product            @relation(fields: [product_id], references: [id])
+  PharmacyActivity PharmacyActivity[]
+  quantity         Int
 
-  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [id])
-  product  Product  @relation(fields: [product_id], references: [id])
-
-  @@id([pharmacy_id, product_id, month, year])
+  @@id([pharmacy_id, product_id, date])
 }
 
 model SampleDistribution {
@@ -176,60 +195,69 @@ model SampleDistribution {
   product       Product  @relation(fields: [product_id], references: [id])
   product_id    String
   samples_given Int
-  date          DateTime
+  date          DateTime @default(now())
 
   @@id([user_id, doctor_id, product_id, date])
 }
 
-model DailyActivity {
-  id                 String   @id @default(uuid())
-  user               User     @relation(fields: [user_id], references: [id])
+model DoctorActivity {
+  id                 String    @id @default(uuid())
+  user               User      @relation(fields: [user_id], references: [id])
   user_id            String
-  product            Product  @relation("generalProducts", fields: [product_id], references: [id])
-  product_id         String
-  doctor             Doctor   @relation(fields: [doctor_id], references: [id])
+  doctor             Doctor    @relation(fields: [doctor_id], references: [id])
   doctor_id          String
-  pharmacy           Pharmacy @relation(fields: [pharmacy_id], references: [id])
-  pharmacy_id        String
-  date               DateTime
-  doctors_met        Int
-  products_detailed  Int
+  date               DateTime  @default(now())
+  products_detailed  Product[] @relation("productsDetailed")
+  focused_product    Product   @relation("focussedProduct", fields: [focused_product_id], references: [id])
+  focused_product_id String    @unique
   samples_given      Int
-  focused_product    Product  @relation("focussedProduct", fields: [focused_product_id], references: [id])
-  focused_product_id String
-  pharmacies_visited Int
-  team               Team[]
+}
+
+model PharmacyActivity {
+  id                       String        @id @default(uuid())
+  user                     User          @relation(fields: [user_id], references: [id])
+  user_id                  String
+  pharmacy                 Pharmacy      @relation(fields: [pharmacy_id], references: [id])
+  pharmacy_id              String
+  date                     DateTime      @default(now())
+  products_in_stock        Product[]
+  stock_tracking           StockTracking @relation(fields: [stockTrackingPharmacy_id, stockTrackingProduct_id, stockTrackingDate], references: [pharmacy_id, product_id, date])
+  stockTrackingPharmacy_id String
+  stockTrackingProduct_id  String
+  stockTrackingDate        DateTime
 }
 
 model DailyPlan {
-  user       User     @relation(fields: [user_id], references: [id])
-  user_id    String
-  date       DateTime
-  activities String
+  user           User     @relation(fields: [user_id], references: [id])
+  user_id        String
+  date           DateTime @default(now())
+  activities     String
+  last_edit_date DateTime @updatedAt
 
   @@id([user_id, date])
 }
 
 model MonthlyPlan {
-  id         String @id @default(uuid())
-  user       User   @relation(fields: [user_id], references: [id])
-  user_id    String
-  month      Int
-  year       Int
-  activities String
-  team       Team[]
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [user_id], references: [id])
+  user_id        String
+  date           DateTime @default(now())
+  activities     String
+  last_edit_date DateTime @updatedAt
+  team           Team[]
 }
 
 model Facility {
-  id          String  @id @default(uuid())
-  name        String
-  location    String
-  description String?
-  latitude    Float?
-  longitude   Float?
-  doctor_id   String?
-  doctor      Doctor? @relation(fields: [doctor_id], references: [id])
-  users       User[]
+  id             String   @id @default(uuid())
+  name           String
+  location       String
+  description    String?
+  latitude       Float?
+  longitude      Float?
+  doctor_id      String?
+  doctor         Doctor?  @relation(fields: [doctor_id], references: [id])
+  users          User[]
+  last_edit_date DateTime @updatedAt
 }
 
 enum UserRole {
