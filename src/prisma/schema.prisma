@@ -39,7 +39,7 @@ model User {
   medical_rep_profile  MedicalRepProfile?
   medical_rep_id       String?              @unique
   date_of_joining      DateTime             @default(now())
-  last_edit_date       DateTime             @updatedAt
+  updatedAt            DateTime?            @updatedAt
   Procurement          Procurement[]
 }
 
@@ -77,7 +77,7 @@ model Profile {
   doctor_id       String?       @unique
   gender          Gender
   date_of_joining DateTime      @default(now())
-  last_edit_date  DateTime      @updatedAt
+  updatedAt       DateTime?     @updatedAt
   Procurement     Procurement[]
 }
 
@@ -86,7 +86,7 @@ model Supervisor {
   supervisor_name    String
   supervisor_profile SupervisorProfile[]
   date_of_joining    DateTime            @default(now())
-  last_edit_date     DateTime            @updatedAt
+  updatedAt          DateTime?           @updatedAt
 }
 
 model Manager {
@@ -94,7 +94,7 @@ model Manager {
   manager_name    String
   ManagerProfile  ManagerProfile[]
   date_of_joining DateTime         @default(now())
-  last_edit_date  DateTime         @updatedAt
+  updatedAt       DateTime?        @updatedAt
 }
 
 model MedicalRep {
@@ -102,7 +102,7 @@ model MedicalRep {
   medical_rep_name  String
   MedicalRepProfile MedicalRepProfile[]
   date_of_joining   DateTime            @default(now())
-  last_edit_date    DateTime            @updatedAt
+  updatedAt         DateTime?           @updatedAt
 }
 
 model Company {
@@ -114,7 +114,7 @@ model Company {
   products        Product[]
   users           User[]
   date_of_joining DateTime  @default(now())
-  last_edit_date  DateTime  @updatedAt
+  updatedAt       DateTime? @updatedAt
 }
 
 model Product {
@@ -125,7 +125,7 @@ model Product {
   stock_trackings          StockTracking[]
   team_products            TeamProduct[]
   sample_distributions     SampleDistribution[]
-  last_edit_date           DateTime             @updatedAt
+  updatedAt                DateTime?            @updatedAt
   doctor_activity          DoctorActivity?      @relation("focussedProduct")
   doctor_activity_id       String?
   general_product_activity DoctorActivity[]     @relation("productsDetailed")
@@ -146,7 +146,7 @@ model Doctor {
   sample_distributions SampleDistribution[]
   profile              Profile?
   date_of_joining      DateTime             @default(now())
-  last_edit_date       DateTime             @updatedAt
+  updatedAt            DateTime?            @updatedAt
   DoctorActivity       DoctorActivity[]
 }
 
@@ -156,7 +156,7 @@ model Pharmacy {
   location         String
   description      String?
   stock_trackings  StockTracking[]
-  last_edit_date   DateTime           @updatedAt
+  updatedAt        DateTime?          @updatedAt
   PharmacyActivity PharmacyActivity[]
   Procurement      Procurement[]
 }
@@ -168,7 +168,7 @@ model Team {
   team_products    TeamProduct[]
   monthly_plans    MonthlyPlan[]
   date_of_creation DateTime      @default(now())
-  last_edit_date   DateTime      @updatedAt
+  updatedAt        DateTime?     @updatedAt
 }
 
 model TeamProduct {
@@ -247,37 +247,37 @@ model Procurement {
 }
 
 model DailyPlan {
-  user           User     @relation(fields: [user_id], references: [id])
-  user_id        String
-  date           DateTime @default(now())
-  activities     String
-  last_edit_date DateTime @updatedAt
+  user       User      @relation(fields: [user_id], references: [id])
+  user_id    String
+  date       DateTime  @default(now())
+  activities String
+  updatedAt  DateTime? @updatedAt
 
   @@id([user_id, date])
 }
 
 model MonthlyPlan {
-  id             String   @id @default(uuid())
-  user           User     @relation(fields: [user_id], references: [id])
-  user_id        String
-  date           DateTime @default(now())
-  activities     String
-  last_edit_date DateTime @updatedAt
-  team           Team[]
+  id         String    @id @default(uuid())
+  user       User      @relation(fields: [user_id], references: [id])
+  user_id    String
+  date       DateTime  @default(now())
+  activities String
+  updatedAt  DateTime? @updatedAt
+  team       Team[]
 }
 
 model Facility {
-  id             String        @id @default(uuid())
-  name           String
-  location       String
-  description    String?
-  latitude       Float?
-  longitude      Float?
-  doctor_id      String?
-  doctor         Doctor?       @relation(fields: [doctor_id], references: [id])
-  users          User[]
-  last_edit_date DateTime      @updatedAt
-  Procurement    Procurement[]
+  id          String        @id @default(uuid())
+  name        String
+  location    String
+  description String?
+  latitude    Float?
+  longitude   Float?
+  doctor_id   String?
+  doctor      Doctor?       @relation(fields: [doctor_id], references: [id])
+  users       User[]
+  updatedAt   DateTime?     @updatedAt
+  Procurement Procurement[]
 }
 
 enum UserRole {

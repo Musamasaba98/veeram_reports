@@ -4,7 +4,7 @@ import prisma from "../config/prisma.config.js";
 
 export const createSampleDistribution = asyncHandler(async (req, res) => {
   try {
-    const { user_id, doctor_id, product_id, samples_given, date } = req.body;
+    const { user_id, doctor_id, product_id, samples_given } = req.body;
 
     const sample = await prisma.sampleDistribution.create({
       data: {
@@ -12,7 +12,6 @@ export const createSampleDistribution = asyncHandler(async (req, res) => {
         doctor: { connect: { id: doctor_id } },
         product: { connect: { id: product_id } },
         samples_given,
-        date: new Date(date),
       },
     });
 
